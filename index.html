@@ -49,6 +49,7 @@
             padding: 10px 20px;
             border-bottom: 1px solid var(--border-color);
             flex-wrap: wrap;
+            gap: 10px;
         }
 
         .header h1 {
@@ -57,12 +58,19 @@
             color: #ffffff;
         }
 
-        .controls {
+        .controls-container {
             display: flex;
-            gap: 10px;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
         }
         
-        .header .btn {
+        .btn {
             background-color: var(--secondary-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
@@ -71,24 +79,35 @@
             cursor: pointer;
             font-size: 0.9em;
             font-weight: 500;
-            transition: background-color 0.2s, color 0.2s;
+            transition: all 0.2s;
             display: flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
         }
 
-        .header .btn:hover {
+        .btn:hover {
             background-color: #4d4d4d;
         }
 
-        .header .btn.primary {
+        .btn.primary {
             background-color: var(--accent-color);
             border-color: var(--accent-color);
             color: white;
         }
 
-        .header .btn.primary:hover {
+        .btn.primary:hover {
             background-color: var(--accent-hover);
+        }
+
+        .btn.success {
+            background-color: var(--success-color);
+            border-color: var(--success-color);
+            color: white;
+        }
+
+        .btn.success:hover {
+            background-color: #43a047;
         }
 
         .content-wrapper {
@@ -99,7 +118,7 @@
         }
 
         .tab-nav {
-            display: none; /* Hidden on desktop */
+            display: none;
             background-color: var(--header-bg);
         }
 
@@ -156,7 +175,7 @@
             font-size: 0.8em;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.2s;
+            transition: all 0.2s;
         }
 
         .editor-instance-container {
@@ -246,7 +265,7 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.2s;
         }
         .close-button:hover {
             color: white;
@@ -407,43 +426,6 @@
             display: block;
         }
 
-        /* Mobile Responsive Design */
-        @media (max-width: 768px) {
-            .header {
-                padding: 10px;
-            }
-            .header h1 {
-                font-size: 1.2em;
-            }
-            .header .btn {
-                padding: 6px 10px;
-                font-size: 0.8em;
-            }
-            .tab-nav {
-                display: flex;
-            }
-            .editor-title {
-                display: none; /* Hide titles on mobile, tabs are used instead */
-            }
-            .editor-box {
-                display: none; /* Hide all editors */
-                border-bottom: none;
-            }
-            .editor-box.active-editor {
-                display: flex; /* Show only active editor */
-            }
-            .modal-content {
-                width: 100%;
-                height: 100%;
-                margin: 0;
-                border-radius: 0;
-            }
-            .settings-panel {
-                width: 90%;
-                right: -90%;
-            }
-        }
-
         /* Loading indicator */
         .loading {
             position: fixed;
@@ -472,6 +454,95 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #555 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Mobile Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                padding: 10px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header h1 {
+                font-size: 1.2em;
+                margin-bottom: 10px;
+            }
+            .controls-container {
+                width: 100%;
+            }
+            .button-row {
+                justify-content: space-between;
+                width: 100%;
+            }
+            .btn {
+                padding: 6px 10px;
+                font-size: 0.8em;
+                flex-grow: 1;
+                justify-content: center;
+            }
+            .tab-nav {
+                display: flex;
+            }
+            .editor-title {
+                display: none;
+            }
+            .editor-box {
+                display: none;
+                border-bottom: none;
+            }
+            .editor-box.active-editor {
+                display: flex;
+            }
+            .modal-content {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                border-radius: 0;
+            }
+            .settings-panel {
+                width: 90%;
+                right: -90%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -479,46 +550,66 @@
     <div class="main-container">
         <div class="header">
             <h1>Advanced Editor</h1>
-            <div class="controls">
-                <button id="preview-btn" class="btn primary">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    প্রিভিউ
-                </button>
-                <button id="download-btn" class="btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="7 10 12 15 17 10"></polyline>
-                        <line x1="12" y1="15" x2="12" y2="3"></line>
-                    </svg>
-                    ডাউনলোড
-                </button>
-                <button id="demo-btn" class="btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    ডেমো
-                </button>
-                <button id="clear-btn" class="btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                    </svg>
-                    ক্লিয়ার
-                </button>
-                <button id="settings-btn" class="btn">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                    </svg>
-                    সেটিংস
-                </button>
+            <div class="controls-container">
+                <div class="button-row">
+                    <button id="preview-btn" class="btn primary tooltip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                        প্রিভিউ
+                        <span class="tooltiptext">লাইভ প্রিভিউ দেখুন (Ctrl+P)</span>
+                    </button>
+                    <button id="download-btn" class="btn tooltip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        ডাউনলোড
+                        <span class="tooltiptext">HTML ফাইল ডাউনলোড করুন (Ctrl+S)</span>
+                    </button>
+                    <button id="demo-btn" class="btn tooltip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        ডেমো
+                        <span class="tooltiptext">ডেমো কোড লোড করুন</span>
+                    </button>
+                </div>
+                <div class="button-row">
+                    <button id="clear-btn" class="btn tooltip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                        ক্লিয়ার
+                        <span class="tooltiptext">সমস্ত কোড ক্লিয়ার করুন</span>
+                    </button>
+                    <button id="format-btn" class="btn success tooltip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="16 3 21 3 21 8"></polyline>
+                            <line x1="4" y1="20" x2="21" y2="3"></line>
+                            <polyline points="21 16 21 21 16 21"></polyline>
+                            <line x1="15" y1="15" x2="21" y2="21"></line>
+                            <line x1="4" y1="4" x2="9" y2="9"></line>
+                        </svg>
+                        ফরম্যাট
+                        <span class="tooltiptext">কোড ফরম্যাট করুন (Shift+Alt+F)</span>
+                    </button>
+                    <button id="settings-btn" class="btn tooltip">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                        </svg>
+                        সেটিংস
+                        <span class="tooltiptext">এডিটর সেটিংস</span>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="content-wrapper">
@@ -531,7 +622,10 @@
                 <div class="editor-box active-editor" data-lang="html">
                     <div class="editor-title">
                         <span>HTML</span>
-                        <button class="copy-btn" data-editor="html">কপি</button>
+                        <div>
+                            <button class="copy-btn" data-editor="html">কপি</button>
+                            <button class="copy-btn format-editor-btn" data-editor="html">ফরম্যাট</button>
+                        </div>
                     </div>
                     <div class="editor-instance-container">
                         <div id="html-editor" class="editor-instance"></div>
@@ -549,7 +643,10 @@
                 <div class="editor-box" data-lang="css">
                     <div class="editor-title">
                         <span>CSS</span>
-                        <button class="copy-btn" data-editor="css">কপি</button>
+                        <div>
+                            <button class="copy-btn" data-editor="css">কপি</button>
+                            <button class="copy-btn format-editor-btn" data-editor="css">ফরম্যাট</button>
+                        </div>
                     </div>
                     <div class="editor-instance-container">
                         <div id="css-editor" class="editor-instance"></div>
@@ -567,7 +664,10 @@
                 <div class="editor-box" data-lang="js">
                     <div class="editor-title">
                         <span>JavaScript</span>
-                        <button class="copy-btn" data-editor="js">কপি</button>
+                        <div>
+                            <button class="copy-btn" data-editor="js">কপি</button>
+                            <button class="copy-btn format-editor-btn" data-editor="js">ফরম্যাট</button>
+                        </div>
                     </div>
                     <div class="editor-instance-container">
                         <div id="js-editor" class="editor-instance"></div>
@@ -650,6 +750,15 @@
                         Auto Indentation
                         <span class="switch">
                             <input type="checkbox" id="auto-indent" checked>
+                            <span class="slider"></span>
+                        </span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        Format on Type
+                        <span class="switch">
+                            <input type="checkbox" id="format-on-type">
                             <span class="slider"></span>
                         </span>
                     </label>
@@ -760,6 +869,7 @@
             autoCompletion: true,
             autoClosing: true,
             autoIndent: true,
+            formatOnType: false,
             syntaxHighlight: true,
             lineNumbers: true,
             wordWrap: true,
@@ -789,6 +899,7 @@
             document.getElementById('auto-completion').checked = editorSettings.autoCompletion;
             document.getElementById('auto-closing').checked = editorSettings.autoClosing;
             document.getElementById('auto-indent').checked = editorSettings.autoIndent;
+            document.getElementById('format-on-type').checked = editorSettings.formatOnType;
             document.getElementById('syntax-highlight').checked = editorSettings.syntaxHighlight;
             document.getElementById('line-numbers').checked = editorSettings.lineNumbers;
             document.getElementById('word-wrap').checked = editorSettings.wordWrap;
@@ -809,6 +920,7 @@
                         autoClosingQuotes: editorSettings.autoClosing ? 'always' : 'never',
                         autoClosingTags: editorSettings.autoClosing ? 'always' : 'never',
                         autoIndent: editorSettings.autoIndent ? 'advanced' : 'none',
+                        formatOnType: editorSettings.formatOnType,
                         lineNumbers: editorSettings.lineNumbers ? 'on' : 'off',
                         wordWrap: editorSettings.wordWrap ? 'on' : 'off',
                         minimap: { enabled: editorSettings.minimap },
@@ -819,6 +931,20 @@
                     monaco.editor.setTheme(editorSettings.theme);
                 }
             }
+        }
+
+        // Format code in the specified editor
+        function formatCode(editorKey) {
+            if (editors[editorKey]) {
+                editors[editorKey].getAction('editor.action.formatDocument').run();
+            }
+        }
+
+        // Format all editors
+        function formatAllCode() {
+            formatCode('html');
+            formatCode('css');
+            formatCode('js');
         }
 
         // Initialize the editor
@@ -1036,8 +1162,19 @@
             URL.revokeObjectURL(a.href);
         });
         
+        // Format button functionality
+        document.getElementById('format-btn').addEventListener('click', formatAllCode);
+        
+        // Format buttons for individual editors
+        document.querySelectorAll('.format-editor-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const editorKey = btn.dataset.editor;
+                formatCode(editorKey);
+            });
+        });
+
         // Copy buttons
-        document.querySelectorAll('.copy-btn').forEach(btn => {
+        document.querySelectorAll('.copy-btn:not(.format-editor-btn)').forEach(btn => {
             btn.addEventListener('click', () => {
                 const editorKey = btn.dataset.editor;
                 const code = editors[editorKey].getValue();
@@ -1115,10 +1252,15 @@
             applyEditorSettings();
         });
 
+        document.getElementById('format-on-type').addEventListener('change', function() {
+            editorSettings.formatOnType = this.checked;
+            saveSettings();
+            applyEditorSettings();
+        });
+
         document.getElementById('syntax-highlight').addEventListener('change', function() {
             editorSettings.syntaxHighlight = this.checked;
             saveSettings();
-            // Note: Syntax highlighting is always on in Monaco, this is for future use
         });
 
         document.getElementById('line-numbers').addEventListener('change', function() {
@@ -1171,6 +1313,7 @@
                     autoCompletion: true,
                     autoClosing: true,
                     autoIndent: true,
+                    formatOnType: false,
                     syntaxHighlight: true,
                     lineNumbers: true,
                     wordWrap: true,
@@ -1183,6 +1326,27 @@
                 applySettingsToUI();
                 saveSettings();
                 applyEditorSettings();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+P for preview
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                document.getElementById('preview-btn').click();
+            }
+            
+            // Ctrl+S for save/download
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                document.getElementById('download-btn').click();
+            }
+            
+            // Shift+Alt+F for format all
+            if (e.shiftKey && e.altKey && e.key === 'F') {
+                e.preventDefault();
+                formatAllCode();
             }
         });
 
